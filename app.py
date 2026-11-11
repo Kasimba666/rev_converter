@@ -741,7 +741,16 @@ def main() -> None:
                                     rows = table.get("rows", [])
                                     if headers and rows:
                                         df = pd.DataFrame(rows, columns=headers)
-                                        st.dataframe(df, use_container_width=True, hide_index=True)
+                                        # Высота, чтобы таблица отображалась полностью без внутреннего скролла
+                                        row_height = 35
+                                        header_height = 40
+                                        table_height = header_height + len(rows) * row_height
+                                        st.dataframe(
+                                            df,
+                                            use_container_width=True,
+                                            hide_index=True,
+                                            height=table_height,
+                                        )
                                     else:
                                         st.write("Пустая таблица")
 
