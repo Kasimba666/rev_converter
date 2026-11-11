@@ -658,9 +658,15 @@ def main() -> None:
                 # Индивидуальные отчёты по файлам
                 for i, d in enumerate(extracted):
                     fi = d["file_info"]
+
+                    # Состояние развёрнутости карточки файла (сохраняется между перерисовками)
+                    expander_key = f"expander_{i}"
+                    if expander_key not in st.session_state:
+                        st.session_state[expander_key] = False
+
                     with st.expander(
                         f"📄 {fi['name']} ({fi['subfolder']}) — {fi['size_kb']} КБ",
-                        expanded=False,
+                        expanded=st.session_state[expander_key],
                     ):
                         # Метаданные файла
                         st.markdown(
@@ -685,6 +691,7 @@ def main() -> None:
                                 use_container_width=True,
                             ):
                                 st.session_state[mode_key] = "json"
+                                st.session_state[expander_key] = True
                                 st.rerun()
                         with b2:
                             if st.button(
@@ -693,6 +700,7 @@ def main() -> None:
                                 use_container_width=True,
                             ):
                                 st.session_state[mode_key] = "table"
+                                st.session_state[expander_key] = True
                                 st.rerun()
                         with b3:
                             if st.button(
@@ -701,6 +709,7 @@ def main() -> None:
                                 use_container_width=True,
                             ):
                                 st.session_state[mode_key] = "xlsx"
+                                st.session_state[expander_key] = True
                                 st.rerun()
 
                         st.divider()
