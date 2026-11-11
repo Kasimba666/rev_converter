@@ -185,6 +185,23 @@ def extract_docx_to_json(file_path: str) -> Dict[str, object]:
         }
         for row in t.rows[1:]:
             table_data["rows"].append([cell.text.strip() for cell in row.cells])
+
+        # Forward fill для колонки «Населённый пункт»:
+        # пустая ячейка берёт значение из предыдущей непустой (составитель не дублирует название)
+        headers = table_data["headers"]
+        idx_point = -1
+        for j, h in enumerate(headers):
+            if "насел" in h.lower():
+                idx_point = j
+                break
+        if idx_point >= 0:
+            last_point = ""
+            for row in table_data["rows"]:
+                if idx_point < len(row) and row[idx_point].strip():
+                    last_point = row[idx_point]
+                elif last_point and idx_point < len(row):
+                    row[idx_point] = last_point
+
         tables_out.append(table_data)
 
     # --- Заголовки и подвалы ---
